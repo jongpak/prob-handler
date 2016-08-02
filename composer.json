@@ -1,0 +1,14 @@
+{
+    "name": "prob/handler",
+    "description": "A simple library for calling function and method",
+    "homepage": "https://github.com/jongpak/prob-handler",
+    "keywords": ["handler", "call", "method", "function", "prodecure"],
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": { "Prob\\Handler\\": "src/" }
+    },
+    "require": {
+        "php": ">=5.6"
+    }
+}
