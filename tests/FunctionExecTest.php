@@ -5,7 +5,7 @@ namespace Prob\Handler;
 use PHPUnit\Framework\TestCase;
 use Prob\Handler\Exception\NoFunctionException;
 
-class FunctionTest extends TestCase
+class FunctionExecTest extends TestCase
 {
     public function testValidStdFuncCallByNoParam()
     {

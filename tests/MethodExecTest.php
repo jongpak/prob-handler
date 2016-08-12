@@ -6,17 +6,17 @@ use PHPUnit\Framework\TestCase;
 use Prob\Handler\Exception\NoClassException;
 use Prob\Handler\Exception\NoMethodException;
 
-class MethodTest extends TestCase
+class MethodExecTest extends TestCase
 {
     public function testValidMethodCallByNoParam()
     {
-        $proc = new Proc('TestClass.testGetMethod', 'Prob\\Handler');
+        $proc = new Proc('MethodTestClass.testGetMethod', 'Prob\\Handler');
         $this->assertEquals($proc->exec(), 'ok');
     }
 
     public function testValidMethodCallByParam()
     {
-        $proc = new Proc('TestClass.testGetMethodParam', 'Prob\\Handler');
+        $proc = new Proc('MethodTestClass.testGetMethodParam', 'Prob\\Handler');
         $this->assertEquals($proc->exec('param!'), ['param!']);
     }
 
@@ -29,11 +29,11 @@ class MethodTest extends TestCase
     public function testInvalidMethodCall()
     {
         $this->expectException(NoMethodException::class);
-        $proc = new Proc('TestClass.NotestGetMethodParam', 'Prob\\Handler');
+        $proc = new Proc('MethodTestClass.NotestGetMethodParam', 'Prob\\Handler');
     }
 }
 
-class TestClass
+class MethodTestClass
 {
     private $str = '';
 
