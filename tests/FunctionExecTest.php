@@ -22,13 +22,13 @@ class FunctionExecTest extends TestCase
     public function testValidUserFuncCallByNoParam()
     {
         $proc = new Proc('testFuncNoParam', 'Prob\\Handler');
-        $this->assertEquals(testFuncNoParam(), ['ok']);
+        $this->assertEquals(testFuncNoParam(), $proc->exec());
     }
 
     public function testValidUserFuncCallByParam()
     {
         $proc = new Proc('testFuncParam', 'Prob\\Handler');
-        $this->assertEquals(testFuncParam('param!'), ['param!']);
+        $this->assertEquals(testFuncParam('param!'), $proc->exec('param!'));
     }
 
     public function testInvalidFuncCall()

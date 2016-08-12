@@ -5,6 +5,7 @@ namespace Prob\Handler;
 use Prob\Handler\Exception\NoClassException;
 use Prob\Handler\Exception\NoMethodException;
 use Prob\Handler\Exception\NoFunctionException;
+use Prob\Handler\ParameterReflection;
 
 class Proc
 {
@@ -23,6 +24,7 @@ class Proc
      */
     public function __construct($func, $namespace = '\\')
     {
+        // Closure
         if (is_callable($func)) {
             $this->func = [
                 'class' => null,
@@ -34,6 +36,7 @@ class Proc
 
         $proc = explode('.', $func);
 
+        // Function
         if (count($proc) < 2) {
             if (function_exists($namespace . '\\' . $func) == false) {
                 throw new NoFunctionException('No Function: ' . $namespace . '\\' . $func);
@@ -41,7 +44,7 @@ class Proc
 
             $this->func = [
                 'class' => null,
-                'func' => $func
+                'func' => $namespace . '\\' . $func
             ];
 
             return;
@@ -53,6 +56,7 @@ class Proc
         if (method_exists($namespace . '\\' . $proc[0], $proc[1]) == false)
             throw new NoMethodException('No Method: ' . $namespace . '\\' . $func);
 
+        // Class method
         $this->func = [
             'class' => $namespace . '\\' . $proc[0],
             'func' => $proc[1]
