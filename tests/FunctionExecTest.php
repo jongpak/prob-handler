@@ -36,6 +36,15 @@ class FunctionExecTest extends TestCase
         $this->expectException(NoFunctionException::class);
         $proc = new Proc('noFunc');
     }
+
+    public function testClosureCall()
+    {
+        $func = function($str) {
+            return $str.'!!!';
+        };
+        $proc = new Proc($func);
+        $this->assertEquals($func('ok'), $proc->exec('ok'));
+    }
 }
 
 function testFuncNoParam()
