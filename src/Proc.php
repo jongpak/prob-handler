@@ -5,7 +5,7 @@ namespace Prob\Handler;
 use Prob\Handler\Exception\NoClassException;
 use Prob\Handler\Exception\NoMethodException;
 use Prob\Handler\Exception\NoFunctionException;
-use Prob\Handler\ParameterReflection;
+use Prob\Handler\Exception\NoBindParameterException;
 
 class Proc
 {
@@ -70,5 +70,46 @@ class Proc
 
         $class = new $this->func['class']();
         return $class->{$this->func['func']}(...$args);
+    }
+
+    public function execWithParameterMap(ParameterMap $map)
+    {
+        $reflection = new ParameterReflection($this->func['class'] ? [$this->func['class'], $this->func['func']] : $this->func['func']);
+        $procParameters = $reflection->getParameters();
+
+        $parameters = [];
+
+        foreach($procParameters as $param) {
+            // Name with Type
+            try {
+                $value = $map->getValueByNameWithType($param['type'], $param['name']);
+                $parameters[] = $value;
+                continue;
+            } catch(NoBindParameterException $e) {
+
+            }
+
+            // only Name
+            try {
+                $value = $map->getValueByName($param['name']);
+                $parameters[] = $value;
+                continue;
+            } catch(NoBindParameterException $e) {
+
+            }
+
+            // only Type
+            try {
+                $value = $map->getValueByType($param['type']);
+                $parameters[] = $value;
+                continue;
+            } catch(NoBindParameterException $e) {
+
+            }
+
+            $parameters[] = null;
+        }
+
+        return $this->exec(...$parameters);
     }
 }
