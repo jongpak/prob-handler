@@ -68,6 +68,11 @@ class ParameterReflection
             return new ReflectionMethod($procedureName[0], $procedureName[1]);
     }
 
+    /**
+     * Get parameters of a function or method
+     *
+     * @return mixed
+     */
     public function getParameters()
     {
         $parameters = $this->reflection->getParameters();
