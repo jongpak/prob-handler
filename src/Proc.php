@@ -16,7 +16,7 @@ class Proc
 
     /**
      * Proc constructor.
-     * @param string|clojure $func example) [clojure] function() { ... } or [string] 'someFuncName' or 'someClassName.methodName'
+     * @param string|clojure $func example) [clojure] function() { ... } or [string] 'someFuncName' or 'someClassName.methodName' format
      * @param string $namespace
      * @throws NoClassException
      * @throws NoFunctionException

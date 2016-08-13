@@ -17,7 +17,7 @@ class ParameterReflection
     private $procedureType = null;
 
     /**
-     * @var array a array of ReflectionParameter class
+     * @var ReflectionParameter[] a array of ReflectionParameter class
      */
     private $parameters = [];
 
@@ -74,7 +74,12 @@ class ParameterReflection
     /**
      * Get parameters of a function or method
      *
-     * @return mixed
+     * return value:
+     * array[index]
+     *          ['type']    string A type of parameter
+     *          ['name']    string A name of parameter
+     *
+     * @return array
      */
     public function getParameters()
     {
