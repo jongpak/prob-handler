@@ -17,13 +17,13 @@ class ParameterReflectionTest extends TestCase
     public function testGetParametersFunctionWithNoArgument()
     {
         $reflection = new ParameterReflection('Prob\\Handler\\testFunctionWithoutArgs');
-        $this->assertEquals($reflection->getParameters(), []);
+        $this->assertEquals([], $reflection->getParameters());
     }
 
     public function testGetParametersFunctionWithArguments()
     {
         $reflection = new ParameterReflection('Prob\\Handler\\testFunctionWithArgs');
-        $this->assertEquals($reflection->getParameters(), [
+        $this->assertEquals([
             [
                 'type' => 'array',
                 'name' => 'arg1'
@@ -36,19 +36,19 @@ class ParameterReflectionTest extends TestCase
                 'type' => null,
                 'name' => 'arg3'
             ]
-        ]);
+        ], $reflection->getParameters());
     }
 
     public function testGetParametersMethodWithNoArgumentsByClassName()
     {
         $reflection = new ParameterReflection([ReflectionTestClass::class, 'testMethodWithoutArgs']);
-        $this->assertEquals($reflection->getParameters(), []);
+        $this->assertEquals([], $reflection->getParameters());
     }
 
     public function testGetParametersMethodWithArgumentsByClassName()
     {
         $reflection = new ParameterReflection([ReflectionTestClass::class, 'testMethodWithArgs']);
-        $this->assertEquals($reflection->getParameters(), [
+        $this->assertEquals([
             [
                 'type' => 'array',
                 'name' => 'arg1'
@@ -61,19 +61,19 @@ class ParameterReflectionTest extends TestCase
                 'type' => null,
                 'name' => 'arg3'
             ]
-        ]);
+        ], $reflection->getParameters());
     }
 
     public function testGetParametersMethodWithNoArgumentsByClassIntance()
     {
         $reflection = new ParameterReflection([new ReflectionTestClass(), 'testMethodWithoutArgs']);
-        $this->assertEquals($reflection->getParameters(), []);
+        $this->assertEquals([], $reflection->getParameters());
     }
 
     public function testGetParametersMethodWithArgumentsByClassIntance()
     {
         $reflection = new ParameterReflection([new ReflectionTestClass(), 'testMethodWithArgs']);
-        $this->assertEquals($reflection->getParameters(), [
+        $this->assertEquals([
             [
                 'type' => 'array',
                 'name' => 'arg1'
@@ -86,19 +86,19 @@ class ParameterReflectionTest extends TestCase
                 'type' => null,
                 'name' => 'arg3'
             ]
-        ]);
+        ], $reflection->getParameters());
     }
 
     public function testGetParametersClojureWithNoArguments()
     {
         $reflection = new ParameterReflection(function() {});
-        $this->assertEquals($reflection->getParameters(), []);
+        $this->assertEquals([], $reflection->getParameters());
     }
 
     public function testGetParametersClojureWithArguments()
     {
         $reflection = new ParameterReflection(function(array $arg1, ParameterDummy $arg2, $arg3) {});
-        $this->assertEquals($reflection->getParameters(), [
+        $this->assertEquals([
             [
                 'type' => 'array',
                 'name' => 'arg1'
@@ -111,7 +111,7 @@ class ParameterReflectionTest extends TestCase
                 'type' => null,
                 'name' => 'arg3'
             ]
-        ]);
+        ], $reflection->getParameters());
     }
 }
 

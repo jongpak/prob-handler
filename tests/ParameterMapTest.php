@@ -11,7 +11,7 @@ class ParameterMapTest extends TestCase
     {
         $map = new ParameterMap();
         $map->bindByName('test', 'ok');
-        $this->assertEquals($map->getValueByName('test'), 'ok');
+        $this->assertEquals('ok', $map->getValueByName('test'));
     }
 
     public function testbBindByInvalidName()
@@ -27,7 +27,7 @@ class ParameterMapTest extends TestCase
     {
         $map = new ParameterMap();
         $map->bindByType(ParameterBindClass::class, 'ok');
-        $this->assertEquals($map->getValueByType(ParameterBindClass::class), 'ok');
+        $this->assertEquals('ok', $map->getValueByType(ParameterBindClass::class));
     }
 
     public function testBindByInvalidType()
@@ -43,7 +43,7 @@ class ParameterMapTest extends TestCase
     {
         $map = new ParameterMap();
         $map->bindByNameWithType(ParameterBindClass::class, 'test', 'ok');
-        $this->assertEquals($map->getValueByNameWithType(ParameterBindClass::class, 'test'), 'ok');
+        $this->assertEquals('ok', $map->getValueByNameWithType(ParameterBindClass::class, 'test'));
     }
 
     public function testBindByInvalidNameWithType()

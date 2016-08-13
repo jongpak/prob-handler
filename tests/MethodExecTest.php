@@ -11,13 +11,17 @@ class MethodExecTest extends TestCase
     public function testValidMethodCallByNoParam()
     {
         $proc = new Proc('MethodTestClass.testGetMethod', 'Prob\\Handler');
-        $this->assertEquals($proc->exec(), 'ok');
+        $methodTestClass = new MethodTestClass();
+
+        $this->assertEquals($methodTestClass->testGetMethod(), $proc->exec());
     }
 
     public function testValidMethodCallByParam()
     {
         $proc = new Proc('MethodTestClass.testGetMethodParam', 'Prob\\Handler');
-        $this->assertEquals($proc->exec('param!'), ['param!']);
+        $methodTestClass = new MethodTestClass();
+
+        $this->assertEquals($methodTestClass->testGetMethodParam('param!'), $proc->exec('param!'));
     }
 
     public function testInvalidClassCall()

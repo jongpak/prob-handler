@@ -18,7 +18,7 @@ class FunctionExecByParameterMapTest extends TestCase
 
         $proc = new Proc('Prob\\Handler\\glueArgs');
 
-        $this->assertEquals($proc->execWithParameterMap($map), '50a,b,cstr');
+        $this->assertEquals('50a,b,cstr', $proc->execWithParameterMap($map));
     }
 }
 
