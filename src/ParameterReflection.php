@@ -10,16 +10,16 @@ use \ReflectionMethod;
 class ParameterReflection
 {
     /**
-     * closure | method | function
+     * (string) procedure type: closure | method | function
      *
      * @var string
      */
     private $procedureType = null;
 
     /**
-     * @var ReflectionParameter
+     * @var array a array of ReflectionParameter class
      */
-    private $reflection = null;
+    private $parameters = [];
 
     /**
      *
@@ -35,7 +35,7 @@ class ParameterReflection
         $reflection = $this->getReflectionProcedure($procedureType, $procedureName);
 
         $this->procedureType = $procedureType;
-        $this->reflection = $reflection;
+        $this->parameters = $reflection->getParameters();
     }
 
     private function resolveFunctionType($procedureName)
@@ -60,6 +60,9 @@ class ParameterReflection
         return null;
     }
 
+    /**
+     * @return ReflectionFunctionAbstract
+     */
     private function getReflectionProcedure($procedureType, $procedureName)
     {
         if($procedureType === 'closure' || $procedureType === 'function')
@@ -75,13 +78,12 @@ class ParameterReflection
      */
     public function getParameters()
     {
-        $parameters = $this->reflection->getParameters();
         $resolvedParameters = [];
 
-        if(count($parameters) === 0)
+        if(count($this->parameters) === 0)
             return [];
 
-        foreach($parameters as $param) {
+        foreach($this->parameters as $param) {
             $resolvedParameters[] = [
                 'type' => (string)$param->getType(),
                 'name' => $param->getName()
