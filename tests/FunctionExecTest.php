@@ -39,7 +39,7 @@ class FunctionExecTest extends TestCase
 
     public function testClosureCall()
     {
-        $func = function($str) {
+        $func = function ($str) {
             return $str.'!!!';
         };
         $proc = new Proc($func);

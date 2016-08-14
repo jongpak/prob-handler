@@ -29,8 +29,9 @@ class ParameterReflection
     {
         $procedureType = $this->resolveFunctionType($procedureName);
 
-        if($procedureType === null)
+        if ($procedureType === null) {
             throw new InvalidArgumentException('Invalid function or method name: ' . var_export($procedureName, true));
+        }
 
         $reflection = $this->getReflectionProcedure($procedureType, $procedureName);
 
@@ -41,18 +42,18 @@ class ParameterReflection
     private function resolveFunctionType($procedureName)
     {
         // Closure
-        if($procedureName instanceof Closure) {
+        if ($procedureName instanceof Closure) {
             return 'closure';
 
         // Class method
-        } elseif(gettype($procedureName) === 'array') {
-            if(is_callable($procedureName) === true) {
+        } elseif (gettype($procedureName) === 'array') {
+            if (is_callable($procedureName) === true) {
                 return 'method';
             }
 
         // Function
-        } elseif(gettype($procedureName) === 'string') {
-            if(is_callable($procedureName) === true) {
+        } elseif (gettype($procedureName) === 'string') {
+            if (is_callable($procedureName) === true) {
                 return 'function';
             }
         }
@@ -65,10 +66,11 @@ class ParameterReflection
      */
     private function getReflectionProcedure($procedureType, $procedureName)
     {
-        if($procedureType === 'closure' || $procedureType === 'function')
+        if ($procedureType === 'closure' || $procedureType === 'function') {
             return new ReflectionFunction($procedureName);
-        elseif($procedureType === 'method')
+        } elseif ($procedureType === 'method') {
             return new ReflectionMethod($procedureName[0], $procedureName[1]);
+        }
     }
 
     /**
@@ -85,10 +87,11 @@ class ParameterReflection
     {
         $resolvedParameters = [];
 
-        if(count($this->parameters) === 0)
+        if (count($this->parameters) === 0) {
             return [];
+        }
 
-        foreach($this->parameters as $param) {
+        foreach ($this->parameters as $param) {
             $resolvedParameters[] = [
                 'type' => (string)$param->getType(),
                 'name' => $param->getName()

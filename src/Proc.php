@@ -50,11 +50,13 @@ class Proc
             return;
         }
 
-        if (class_exists($namespace . '\\' . $proc[0]) == false)
+        if (class_exists($namespace . '\\' . $proc[0]) == false) {
             throw new NoClassException('No Class: ' . $namespace . '\\' . $func);
+        }
 
-        if (method_exists($namespace . '\\' . $proc[0], $proc[1]) == false)
+        if (method_exists($namespace . '\\' . $proc[0], $proc[1]) == false) {
             throw new NoMethodException('No Method: ' . $namespace . '\\' . $func);
+        }
 
         // Class method
         $this->func = [
@@ -65,8 +67,9 @@ class Proc
 
     public function exec(...$args)
     {
-        if ($this->func['class'] == null)
+        if ($this->func['class'] == null) {
             return call_user_func_array($this->func['func'], $args);
+        }
 
         $class = new $this->func['class']();
         return $class->{$this->func['func']}(...$args);
@@ -79,14 +82,13 @@ class Proc
 
         $parameters = [];
 
-        foreach($procParameters as $param) {
+        foreach ($procParameters as $param) {
             // Name with Type
             try {
                 $value = $map->getValueByNameWithType($param['type'], $param['name']);
                 $parameters[] = $value;
                 continue;
-            } catch(NoBindParameterException $e) {
-
+            } catch (NoBindParameterException $e) {
             }
 
             // only Name
@@ -94,8 +96,7 @@ class Proc
                 $value = $map->getValueByName($param['name']);
                 $parameters[] = $value;
                 continue;
-            } catch(NoBindParameterException $e) {
-
+            } catch (NoBindParameterException $e) {
             }
 
             // only Type
@@ -103,8 +104,7 @@ class Proc
                 $value = $map->getValueByType($param['type']);
                 $parameters[] = $value;
                 continue;
-            } catch(NoBindParameterException $e) {
-
+            } catch (NoBindParameterException $e) {
             }
 
             $parameters[] = null;

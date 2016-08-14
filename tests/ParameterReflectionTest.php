@@ -91,13 +91,13 @@ class ParameterReflectionTest extends TestCase
 
     public function testGetParametersClojureWithNoArguments()
     {
-        $reflection = new ParameterReflection(function() {});
+        $reflection = new ParameterReflection(function () {});
         $this->assertEquals([], $reflection->getParameters());
     }
 
     public function testGetParametersClojureWithArguments()
     {
-        $reflection = new ParameterReflection(function(array $arg1, ParameterDummy $arg2, $arg3) {});
+        $reflection = new ParameterReflection(function (array $arg1, ParameterDummy $arg2, $arg3) {});
         $this->assertEquals([
             [
                 'type' => 'array',
@@ -117,28 +117,23 @@ class ParameterReflectionTest extends TestCase
 
 class ParameterDummy
 {
-
 }
 
 class ReflectionTestClass
 {
     public function testMethodWithoutArgs(/* no argument */)
     {
-
     }
 
     public function testMethodWithArgs(array $arg1, ParameterDummy $arg2, $arg3)
     {
-
     }
 }
 
 function testFunctionWithoutArgs(/* no argument */)
 {
-
 }
 
 function testFunctionWithArgs(array $arg1, ParameterDummy $arg2, $arg3)
 {
-
 }
