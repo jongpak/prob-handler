@@ -12,54 +12,68 @@ class Proc
     /**
      * @var array
      */
-    protected $func = null;
+    protected $procedure = null;
 
     /**
      * Proc constructor.
-     * @param string|clojure $func example) [clojure] function() { ... } or [string] 'someFuncName' or 'someClassName.methodName' format
+     * @param string|clojure $procedure [clojure] function() { ... } or [string] 'someFuncName' or 'someClassName.methodName' format
      * @param string $namespace
      * @throws NoClassException
      * @throws NoFunctionException
      * @throws NoMethodException
      */
-    public function __construct($func, $namespace = '\\')
+    public function __construct($procedure, $namespace = '\\')
     {
         // Closure
-        if (is_callable($func)) {
-            $this->func = [
-                'class' => null,
-                'func' => $func
-            ];
+        if (is_callable($procedure)) {
+            $this->setCallableProcedure($procedure);
+        } else {
+            $proc = explode('.', $procedure);
 
-            return;
-        }
+            // Function
+            if (count($proc) < 2) {
+                $this->setFunctionProcedure($procedure, $namespace);
 
-        $proc = explode('.', $func);
-
-        // Function
-        if (count($proc) < 2) {
-            if (function_exists($namespace . '\\' . $func) == false) {
-                throw new NoFunctionException('No Function: ' . $namespace . '\\' . $func);
+            // Class method
+            } else {
+                $this->setMethodProcedure($procedure, $namespace);
             }
-
-            $this->func = [
-                'class' => null,
-                'func' => $namespace . '\\' . $func
-            ];
-
-            return;
         }
+    }
+
+    private function setCallableProcedure($procedure)
+    {
+        $this->procedure = [
+            'class' => null,
+            'func' => $procedure
+        ];
+    }
+
+    private function setFunctionProcedure($procedure, $namespace)
+    {
+        if (function_exists($namespace . '\\' . $procedure) == false) {
+            throw new NoFunctionException('No Function: ' . $namespace . '\\' . $procedure);
+        }
+
+        $this->procedure = [
+            'class' => null,
+            'func' => $namespace . '\\' . $procedure
+        ];
+    }
+
+    private function setMethodProcedure($procedure, $namespace)
+    {
+        $proc = explode('.', $procedure);
 
         if (class_exists($namespace . '\\' . $proc[0]) == false) {
-            throw new NoClassException('No Class: ' . $namespace . '\\' . $func);
+            throw new NoClassException('No Class: ' . $namespace . '\\' . $procedure);
         }
 
         if (method_exists($namespace . '\\' . $proc[0], $proc[1]) == false) {
-            throw new NoMethodException('No Method: ' . $namespace . '\\' . $func);
+            throw new NoMethodException('No Method: ' . $namespace . '\\' . $procedure);
         }
 
-        // Class method
-        $this->func = [
+        $this->procedure = [
             'class' => $namespace . '\\' . $proc[0],
             'func' => $proc[1]
         ];
@@ -67,17 +81,17 @@ class Proc
 
     public function exec(...$args)
     {
-        if ($this->func['class'] == null) {
-            return call_user_func_array($this->func['func'], $args);
+        if ($this->procedure['class'] == null) {
+            return call_user_func_array($this->procedure['func'], $args);
         }
 
-        $class = new $this->func['class']();
-        return $class->{$this->func['func']}(...$args);
+        $class = new $this->procedure['class']();
+        return $class->{$this->procedure['func']}(...$args);
     }
 
     public function execWithParameterMap(ParameterMap $map)
     {
-        $reflection = new ParameterReflection($this->func['class'] ? [$this->func['class'], $this->func['func']] : $this->func['func']);
+        $reflection = new ParameterReflection($this->procedure['class'] ? [$this->procedure['class'], $this->procedure['func']] : $this->procedure['func']);
         $procParameters = $reflection->getParameters();
 
         $parameters = [];
