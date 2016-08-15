@@ -91,39 +91,43 @@ class Proc
 
     public function execWithParameterMap(ParameterMap $map)
     {
-        $reflection = new ParameterReflection($this->procedure['class'] ? [$this->procedure['class'], $this->procedure['func']] : $this->procedure['func']);
+        $reflection = new ParameterReflection($this->buildProcedureFormat());
         $procParameters = $reflection->getParameters();
 
         $parameters = [];
 
         foreach ($procParameters as $param) {
-            // Name with Type
-            try {
-                $value = $map->getValueByNameWithType($param['type'], $param['name']);
-                $parameters[] = $value;
-                continue;
-            } catch (NoBindParameterException $e) {
-            }
+            $type = $param['type'];
+            $name = $param['name'];
 
-            // only Name
-            try {
-                $value = $map->getValueByName($param['name']);
-                $parameters[] = $value;
+            // bind Name with Type
+            if ($map->isExistBindingParameterByNameWithType($type, $name) === true) {
+                $parameters[] = $map->getValueByNameWithType($type, $name);
                 continue;
-            } catch (NoBindParameterException $e) {
-            }
 
-            // only Type
-            try {
-                $value = $map->getValueByType($param['type']);
-                $parameters[] = $value;
+            // bind Name
+            } elseif ($map->isExistBindingParameterByName($name) === true) {
+                $parameters[] = $map->getValueByName($name);
                 continue;
-            } catch (NoBindParameterException $e) {
-            }
 
-            $parameters[] = null;
+            // bind Type
+            } elseif ($map->isExistBindingParameterByType($type) === true) {
+                $parameters[] = $map->getValueByType($type);
+                continue;
+
+            // no bind
+            } else {
+                $parameters[] = null;
+            }
         }
 
         return $this->exec(...$parameters);
+    }
+
+    private function buildProcedureFormat()
+    {
+        return $this->procedure['class']
+                    ? [ $this->procedure['class'], $this->procedure['func'] ]
+                    : $this->procedure['func'];
     }
 }

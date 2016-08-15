@@ -62,7 +62,7 @@ class ParameterMap
      */
     public function getValueByName($name)
     {
-        if (isset($this->names[$name]) === false) {
+        if ($this->isExistBindingParameterByName($name) === false) {
             throw new NoBindParameterException('No parameter name: ' . $name);
         }
 
@@ -76,7 +76,7 @@ class ParameterMap
      */
     public function getValueByType($type)
     {
-        if (isset($this->types[$type]) === false) {
+        if ($this->isExistBindingParameterByType($type) === false) {
             throw new NoBindParameterException('No parameter type: ' . $type);
         }
 
@@ -91,10 +91,25 @@ class ParameterMap
      */
     public function getValueByNameWithType($type, $name)
     {
-        if (isset($this->nameWithTypes[$type]) === false || isset($this->nameWithTypes[$type][$name]) === false) {
+        if ($this->isExistBindingParameterByNameWithType($type, $name) === false) {
             throw new NoBindParameterException('No parameter type and name: ' . $type . ', ' . $name);
         }
 
         return $this->nameWithTypes[$type][$name];
+    }
+
+    public function isExistBindingParameterByName($name)
+    {
+        return isset($this->names[$name]);
+    }
+
+    public function isExistBindingParameterByType($type)
+    {
+        return isset($this->types[$type]);
+    }
+
+    public function isExistBindingParameterByNameWithType($type, $name)
+    {
+        return isset($this->nameWithTypes[$type]) && isset($this->nameWithTypes[$type][$name]);
     }
 }
