@@ -91,36 +91,7 @@ class Proc
 
     public function execWithParameterMap(ParameterMap $map)
     {
-        $reflection = new ParameterReflection($this->buildProcedureFormat());
-        $procParameters = $reflection->getParameters();
-
-        $parameters = [];
-
-        foreach ($procParameters as $param) {
-            $type = $param['type'];
-            $name = $param['name'];
-
-            // bind Name with Type
-            if ($map->isExistBindingParameterByNameWithType($type, $name) === true) {
-                $parameters[] = $map->getValueByNameWithType($type, $name);
-                continue;
-
-            // bind Name
-            } elseif ($map->isExistBindingParameterByName($name) === true) {
-                $parameters[] = $map->getValueByName($name);
-                continue;
-
-            // bind Type
-            } elseif ($map->isExistBindingParameterByType($type) === true) {
-                $parameters[] = $map->getValueByType($type);
-                continue;
-
-            // no bind
-            } else {
-                $parameters[] = null;
-            }
-        }
-
+        $parameters = $this->getResolvedParameterByMap($map);
         return $this->exec(...$parameters);
     }
 
@@ -129,5 +100,40 @@ class Proc
         return $this->procedure['class']
                     ? [ $this->procedure['class'], $this->procedure['func'] ]
                     : $this->procedure['func'];
+    }
+
+    private function getResolvedParameterByMap(ParameterMap $map)
+    {
+        $reflection = new ParameterReflection($this->buildProcedureFormat());
+        $procParameters = $reflection->getParameters();
+
+        $parameters = [];
+
+        foreach ($procParameters as $param) {
+            $parameters[] = $this->getMatchedParameterByMap($map, $param);
+        }
+
+        return $parameters;
+    }
+
+    private function getMatchedParameterByMap(ParameterMap $map, array $parameter)
+    {
+        $type = $parameter['type'];
+        $name = $parameter['name'];
+
+        // bind Name with Type
+        if ($map->isExistBindingParameterByNameWithType($type, $name) === true) {
+            return $map->getValueByNameWithType($type, $name);
+        }
+
+        // bind Name
+        if ($map->isExistBindingParameterByName($name) === true) {
+            return $map->getValueByName($name);
+        }
+
+        // bind Type
+        if ($map->isExistBindingParameterByType($type) === true) {
+            return $map->getValueByType($type);
+        }
     }
 }
