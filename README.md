@@ -1,6 +1,8 @@
 # Prob/Handler
 *A simple library for calling function and method*
 
+[![Build Status](https://travis-ci.org/jongpak/prob-handler.svg?branch=master)](https://travis-ci.org/jongpak/prob-handler)
+
 ## Usage
 
 ### calling function
