@@ -9,7 +9,7 @@
         "psr-4": { "Prob\\Handler\\": "src/" }
     },
     "require": {
-        "php": ">=5.6"
+        "php": ">=7.0"
     },
     "require-dev": {
       "phpunit/phpunit": "*"
