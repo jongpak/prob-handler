@@ -40,6 +40,8 @@ class Proc
      */
     private function validateProcedure($procedure, $namespace)
     {
+        $resolvedProcedure = $this->getResolvedProcedureInfo($procedure, $namespace);
+
         switch ($this->getProcedureType($procedure)) {
             case 'function':
                 if (function_exists($resolvedProcedure['func']) === false) {
