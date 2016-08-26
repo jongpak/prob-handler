@@ -51,7 +51,7 @@ class Proc
 
     private function setFunctionProcedure($procedure, $namespace)
     {
-        if (function_exists($namespace . '\\' . $procedure) == false) {
+        if (function_exists($namespace . '\\' . $procedure) === false) {
             throw new NoFunctionException('No Function: ' . $namespace . '\\' . $procedure);
         }
 
@@ -65,11 +65,11 @@ class Proc
     {
         $proc = explode('.', $procedure);
 
-        if (class_exists($namespace . '\\' . $proc[0]) == false) {
+        if (class_exists($namespace . '\\' . $proc[0]) === false) {
             throw new NoClassException('No Class: ' . $namespace . '\\' . $procedure);
         }
 
-        if (method_exists($namespace . '\\' . $proc[0], $proc[1]) == false) {
+        if (method_exists($namespace . '\\' . $proc[0], $proc[1]) === false) {
             throw new NoMethodException('No Method: ' . $namespace . '\\' . $procedure);
         }
 
