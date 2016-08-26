@@ -24,58 +24,78 @@ class Proc
      */
     public function __construct($procedure, $namespace = '\\')
     {
-        // Closure
+        $this->setProcedure($procedure, $namespace);
+    }
+
+    private function setProcedure($procedure, $namespace)
+    {
+        $this->validateProcedure($procedure, $namespace);
+        $this->procedure = $this->getResolvedProcedureInfo($procedure, $namespace);
+    }
+
+    /**
+     * @throws NoFunctionException
+     * @throws NoClassException
+     * @throws NoMethodException
+     */
+    private function validateProcedure($procedure, $namespace)
+    {
+        switch ($this->getProcedureType($procedure)) {
+            case 'function':
+                if (function_exists($resolvedProcedure['func']) === false) {
+                    throw new NoFunctionException('No Function: ' . $namespace . '\\' . $procedure);
+                }
+                break;
+
+            case 'method':
+                if (class_exists($resolvedProcedure['class']) === false) {
+                    throw new NoClassException('No Class: ' . $namespace . '\\' . $procedure);
+                }
+
+                if (method_exists($resolvedProcedure['class'], $resolvedProcedure['func']) === false) {
+                    throw new NoMethodException('No Method: ' . $namespace . '\\' . $procedure);
+                }
+                break;
+        }
+    }
+
+    private function getProcedureType($procedure)
+    {
         if (is_callable($procedure)) {
-            $this->setCallableProcedure($procedure);
-        } else {
-            $proc = explode('.', $procedure);
-
-            // Function
-            if (count($proc) < 2) {
-                $this->setFunctionProcedure($procedure, $namespace);
-
-            // Class method
-            } else {
-                $this->setMethodProcedure($procedure, $namespace);
-            }
+            return 'closure';
         }
+
+        if (count(explode('.', $procedure)) < 2) {
+            return 'function';
+        }
+
+        return 'method';
     }
 
-    private function setCallableProcedure($procedure)
+    private function getResolvedProcedureInfo($procedure, $namespace)
     {
-        $this->procedure = [
-            'class' => null,
-            'func' => $procedure
-        ];
-    }
+        $className = null;
+        $ClosureOrFunctionName = null;
 
-    private function setFunctionProcedure($procedure, $namespace)
-    {
-        if (function_exists($namespace . '\\' . $procedure) === false) {
-            throw new NoFunctionException('No Function: ' . $namespace . '\\' . $procedure);
+        switch ($this->getProcedureType($procedure)) {
+            case 'closure':
+                $ClosureOrFunctionName = $procedure;
+                break;
+
+            case 'function':
+                $ClosureOrFunctionName = $namespace . '\\' . $procedure;
+                break;
+
+            case 'method':
+                $token = explode('.', $procedure);
+                $className = $namespace . '\\' . $token[0];
+                $ClosureOrFunctionName = $token[1];
+                break;
         }
 
-        $this->procedure = [
-            'class' => null,
-            'func' => $namespace . '\\' . $procedure
-        ];
-    }
-
-    private function setMethodProcedure($procedure, $namespace)
-    {
-        $proc = explode('.', $procedure);
-
-        if (class_exists($namespace . '\\' . $proc[0]) === false) {
-            throw new NoClassException('No Class: ' . $namespace . '\\' . $procedure);
-        }
-
-        if (method_exists($namespace . '\\' . $proc[0], $proc[1]) === false) {
-            throw new NoMethodException('No Method: ' . $namespace . '\\' . $procedure);
-        }
-
-        $this->procedure = [
-            'class' => $namespace . '\\' . $proc[0],
-            'func' => $proc[1]
+        return [
+            'class' => $className,
+            'func' => $ClosureOrFunctionName
         ];
     }
 
