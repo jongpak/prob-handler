@@ -45,52 +45,10 @@ class Executor
 
     public function execWithParameterMap(ParameterMap $map)
     {
-        $parameters = $this->getResolvedParameterByMap($map);
-        return $this->exec(...$parameters);
-    }
+        $mapper = new ParameterMapper();
+        $mapper->setParameterMap($map);
+        $mapper->setProc($this->proc);
 
-    private function getResolvedParameterByMap(ParameterMap $map)
-    {
-        $reflection = new ParameterReflection($this->buildProcedureFormat());
-        $procParameters = $reflection->getParameters();
-
-        $parameters = [];
-
-        foreach ($procParameters as $param) {
-            $parameters[] = $this->getMatchedParameterByMap($map, $param);
-        }
-
-        return $parameters;
-    }
-
-    private function buildProcedureFormat()
-    {
-        return $this->type == Proc::TYPE_METHOD
-                    ? [
-                        $this->namespace . '\\' . $this->resolvedName['class'],
-                        $this->resolvedName['func']
-                      ]
-                    : $this->namespace . $this->resolvedName['func'];
-    }
-
-    private function getMatchedParameterByMap(ParameterMap $map, array $parameter)
-    {
-        $type = $parameter['type'];
-        $name = $parameter['name'];
-
-        // bind Name with Type
-        if ($map->isExistBindingParameterByNameWithType($type, $name) === true) {
-            return $map->getValueByNameWithType($type, $name);
-        }
-
-        // bind Name
-        if ($map->isExistBindingParameterByName($name) === true) {
-            return $map->getValueByName($name);
-        }
-
-        // bind Type
-        if ($map->isExistBindingParameterByType($type) === true) {
-            return $map->getValueByType($type);
-        }
+        return $this->exec(...$mapper->getMappedParameters());
     }
 }
