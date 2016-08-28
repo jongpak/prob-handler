@@ -9,10 +9,19 @@ use Prob\Handler\Exception\NoBindParameterException;
 
 class Proc
 {
+
+    const TYPE_CLOSURE = 'closure';
+    const TYPE_FUNCTION = 'function';
+    const TYPE_METHOD = 'method';
+
     /**
-     * @var array
+     * [clojure] function() { ... }
+     * [string] 'someFuncName' or 'someClassName.methodName' format
+     *
+     * @var string|clojure
      */
-    protected $procedure = null;
+    private $procedure = null;
+    private $namespace = '';
 
     /**
      * Proc constructor.
@@ -24,13 +33,10 @@ class Proc
      */
     public function __construct($procedure, $namespace = '\\')
     {
-        $this->setProcedure($procedure, $namespace);
-    }
+        $this->procedure = $procedure;
+        $this->namespace = $namespace;
 
-    private function setProcedure($procedure, $namespace)
-    {
-        $this->validateProcedure($procedure, $namespace);
-        $this->procedure = $this->getResolvedProcedureInfo($procedure, $namespace);
+        $this->validateProcedure();
     }
 
     /**
@@ -38,64 +44,81 @@ class Proc
      * @throws NoClassException
      * @throws NoMethodException
      */
-    private function validateProcedure($procedure, $namespace)
+    private function validateProcedure()
     {
-        $resolvedProcedure = $this->getResolvedProcedureInfo($procedure, $namespace);
+        $resolvedProcedure = $this->getResolvedProcedureInfo();
 
-        switch ($this->getProcedureType($procedure)) {
-            case 'function':
-                if (function_exists($resolvedProcedure['func']) === false) {
-                    throw new NoFunctionException('No Function: ' . $namespace . '\\' . $procedure);
+        switch ($this->getProcedureType()) {
+            case Proc::TYPE_FUNCTION:
+                if (function_exists($this->namespace . '\\' . $resolvedProcedure['func']) === false) {
+                    throw new NoFunctionException(
+                        sprintf('No Function: %s\\%s',
+                                    $this->namespace,
+                                    $resolvedProcedure['func']
+                        )
+                    );
                 }
                 break;
 
-            case 'method':
-                if (class_exists($resolvedProcedure['class']) === false) {
-                    throw new NoClassException('No Class: ' . $namespace . '\\' . $procedure);
+            case Proc::TYPE_METHOD:
+                if (class_exists($this->namespace . '\\' . $resolvedProcedure['class']) === false) {
+                    throw new NoClassException(
+                        sprintf('No Class: %s\\%s',
+                                    $this->namespace,
+                                    $resolvedProcedure['class']
+                        )
+                    );
                 }
 
-                if (method_exists($resolvedProcedure['class'], $resolvedProcedure['func']) === false) {
-                    throw new NoMethodException('No Method: ' . $namespace . '\\' . $procedure);
+                if (method_exists($this->namespace . '\\' . $resolvedProcedure['class'], $resolvedProcedure['func']) === false) {
+                    throw new NoMethodException(
+                        sprintf('No Method: %s\\%s::%s',
+                                    $this->namespace,
+                                    $resolvedProcedure['class'],
+                                    $resolvedProcedure['func']
+                        )
+                    );
                 }
                 break;
         }
     }
 
-    private function getProcedureType($procedure)
+    private function getProcedureType()
     {
-        if (is_callable($procedure)) {
-            return 'closure';
+        if (is_callable($this->procedure)) {
+            return Proc::TYPE_CLOSURE;
         }
 
-        if (count(explode('.', $procedure)) < 2) {
-            return 'function';
+        if (count(explode('.', $this->procedure)) < 2) {
+            return Proc::TYPE_FUNCTION;
         }
 
-        return 'method';
+        return Proc::TYPE_METHOD;
     }
 
-    private function getResolvedProcedureInfo($procedure, $namespace)
+    private function getResolvedProcedureInfo()
     {
         $className = null;
         $ClosureOrFunctionName = null;
 
-        switch ($this->getProcedureType($procedure)) {
-            case 'closure':
-                $ClosureOrFunctionName = $procedure;
+        switch ($this->getProcedureType()) {
+            case Proc::TYPE_CLOSURE:
+                $ClosureOrFunctionName = $this->procedure;
                 break;
 
-            case 'function':
-                $ClosureOrFunctionName = $namespace . '\\' . $procedure;
+            case Proc::TYPE_FUNCTION:
+                $ClosureOrFunctionName = $this->procedure;
                 break;
 
-            case 'method':
-                $token = explode('.', $procedure);
-                $className = $namespace . '\\' . $token[0];
+            case Proc::TYPE_METHOD:
+                $token = explode('.', $this->procedure);
+                $className = $token[0];
                 $ClosureOrFunctionName = $token[1];
                 break;
         }
 
         return [
+            'namespace' => $this->namespace,
             'class' => $className,
             'func' => $ClosureOrFunctionName
         ];
@@ -103,12 +126,24 @@ class Proc
 
     public function exec(...$args)
     {
-        if ($this->procedure['class'] == null) {
-            return call_user_func_array($this->procedure['func'], $args);
-        }
+        $resolvedProcedure = $this->getResolvedProcedureInfo();
 
-        $class = new $this->procedure['class']();
-        return $class->{$this->procedure['func']}(...$args);
+        switch ($this->getProcedureType()) {
+            case Proc::TYPE_CLOSURE:
+                return $resolvedProcedure['func'](...$args);
+                break;
+
+            case Proc::TYPE_FUNCTION:
+                $function = $this->namespace . '\\' . $resolvedProcedure['func'];
+                return $function(...$args);
+                break;
+
+            case Proc::TYPE_METHOD:
+                $className = $this->namespace . '\\' . $resolvedProcedure['class'];
+                $instance = new $className();
+                return $instance->{$resolvedProcedure['func']}(...$args);
+                break;
+        }
     }
 
     public function execWithParameterMap(ParameterMap $map)
@@ -119,9 +154,13 @@ class Proc
 
     private function buildProcedureFormat()
     {
-        return $this->procedure['class']
-                    ? [ $this->procedure['class'], $this->procedure['func'] ]
-                    : $this->procedure['func'];
+        $resolvedProcedure = $this->getResolvedProcedureInfo();
+        return $this->getProcedureType() == Proc::TYPE_METHOD
+                    ? [
+                        $this->namespace . '\\' . $resolvedProcedure['class'],
+                        $resolvedProcedure['func']
+                      ]
+                    : $this->namespace . $resolvedProcedure['func'];
     }
 
     private function getResolvedParameterByMap(ParameterMap $map)
