@@ -46,9 +46,9 @@ class Proc
      */
     private function validateProcedure()
     {
-        $resolvedProcedure = $this->getResolvedProcedureInfo();
+        $resolvedProcedure = $this->getResolvedName();
 
-        switch ($this->getProcedureType()) {
+        switch ($this->getType()) {
             case Proc::TYPE_FUNCTION:
                 if (function_exists($this->namespace . '\\' . $resolvedProcedure['func']) === false) {
                     throw new NoFunctionException(
@@ -83,7 +83,7 @@ class Proc
         }
     }
 
-    private function getProcedureType()
+    public function getType()
     {
         if (is_callable($this->procedure)) {
             return Proc::TYPE_CLOSURE;
@@ -96,12 +96,12 @@ class Proc
         return Proc::TYPE_METHOD;
     }
 
-    private function getResolvedProcedureInfo()
+    public function getResolvedName()
     {
         $className = null;
         $ClosureOrFunctionName = null;
 
-        switch ($this->getProcedureType()) {
+        switch ($this->getType()) {
             case Proc::TYPE_CLOSURE:
                 $ClosureOrFunctionName = $this->procedure;
                 break;
@@ -126,75 +126,13 @@ class Proc
 
     public function exec(...$args)
     {
-        $resolvedProcedure = $this->getResolvedProcedureInfo();
-
-        switch ($this->getProcedureType()) {
-            case Proc::TYPE_CLOSURE:
-                return $resolvedProcedure['func'](...$args);
-                break;
-
-            case Proc::TYPE_FUNCTION:
-                $function = $this->namespace . '\\' . $resolvedProcedure['func'];
-                return $function(...$args);
-                break;
-
-            case Proc::TYPE_METHOD:
-                $className = $this->namespace . '\\' . $resolvedProcedure['class'];
-                $instance = new $className();
-                return $instance->{$resolvedProcedure['func']}(...$args);
-                break;
-        }
+        $executor = new Executor($this);
+        return $executor->exec(...$args);
     }
 
     public function execWithParameterMap(ParameterMap $map)
     {
-        $parameters = $this->getResolvedParameterByMap($map);
-        return $this->exec(...$parameters);
-    }
-
-    private function buildProcedureFormat()
-    {
-        $resolvedProcedure = $this->getResolvedProcedureInfo();
-        return $this->getProcedureType() == Proc::TYPE_METHOD
-                    ? [
-                        $this->namespace . '\\' . $resolvedProcedure['class'],
-                        $resolvedProcedure['func']
-                      ]
-                    : $this->namespace . $resolvedProcedure['func'];
-    }
-
-    private function getResolvedParameterByMap(ParameterMap $map)
-    {
-        $reflection = new ParameterReflection($this->buildProcedureFormat());
-        $procParameters = $reflection->getParameters();
-
-        $parameters = [];
-
-        foreach ($procParameters as $param) {
-            $parameters[] = $this->getMatchedParameterByMap($map, $param);
-        }
-
-        return $parameters;
-    }
-
-    private function getMatchedParameterByMap(ParameterMap $map, array $parameter)
-    {
-        $type = $parameter['type'];
-        $name = $parameter['name'];
-
-        // bind Name with Type
-        if ($map->isExistBindingParameterByNameWithType($type, $name) === true) {
-            return $map->getValueByNameWithType($type, $name);
-        }
-
-        // bind Name
-        if ($map->isExistBindingParameterByName($name) === true) {
-            return $map->getValueByName($name);
-        }
-
-        // bind Type
-        if ($map->isExistBindingParameterByType($type) === true) {
-            return $map->getValueByType($type);
-        }
+        $executor = new Executor($this);
+        return $executor->execWithParameterMap($map);
     }
 }
