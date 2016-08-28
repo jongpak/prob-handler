@@ -36,7 +36,7 @@ class Proc
         $this->procedure = $procedure;
         $this->namespace = $namespace;
 
-        $this->validateProcedure();
+        $this->validate();
     }
 
     /**
@@ -44,43 +44,9 @@ class Proc
      * @throws NoClassException
      * @throws NoMethodException
      */
-    private function validateProcedure()
+    private function validate()
     {
-        $resolvedProcedure = $this->getResolvedName();
-
-        switch ($this->getType()) {
-            case Proc::TYPE_FUNCTION:
-                if (function_exists($this->namespace . '\\' . $resolvedProcedure['func']) === false) {
-                    throw new NoFunctionException(
-                        sprintf('No Function: %s\\%s',
-                                    $this->namespace,
-                                    $resolvedProcedure['func']
-                        )
-                    );
-                }
-                break;
-
-            case Proc::TYPE_METHOD:
-                if (class_exists($this->namespace . '\\' . $resolvedProcedure['class']) === false) {
-                    throw new NoClassException(
-                        sprintf('No Class: %s\\%s',
-                                    $this->namespace,
-                                    $resolvedProcedure['class']
-                        )
-                    );
-                }
-
-                if (method_exists($this->namespace . '\\' . $resolvedProcedure['class'], $resolvedProcedure['func']) === false) {
-                    throw new NoMethodException(
-                        sprintf('No Method: %s\\%s::%s',
-                                    $this->namespace,
-                                    $resolvedProcedure['class'],
-                                    $resolvedProcedure['func']
-                        )
-                    );
-                }
-                break;
-        }
+        ProcValidator::validate($this);
     }
 
     public function getType()
