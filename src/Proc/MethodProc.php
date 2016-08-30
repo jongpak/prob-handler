@@ -5,6 +5,8 @@ namespace Prob\Handler\Proc;
 use Prob\Handler\ProcInterface;
 use Prob\Handler\ParameterMapper;
 use Prob\Handler\ParameterMap;
+use Prob\Handler\Exception\NoClassException;
+use Prob\Handler\Exception\NoMethodException;
 use \ReflectionMethod;
 
 class MethodProc implements ProcInterface
@@ -18,10 +20,27 @@ class MethodProc implements ProcInterface
     public function __construct($methodNameWithClassName, $namespace = '')
     {
         $token = explode('.', $methodNameWithClassName);
+
         $this->className = $token[0];
         $this->methodName = $token[1];
-
         $this->namespace = $namespace;
+
+        $this->validate();
+    }
+
+    private function validate()
+    {
+        if (class_exists($this->namespace . '\\' . $this->className) === false) {
+            throw new NoClassException(
+                sprintf('No Class: %s\\%s', $this->namespace, $this->className)
+            );
+        }
+
+        if (method_exists($this->namespace . '\\' . $this->className, $this->methodName) === false) {
+            throw new NoMethodException(
+                sprintf('No Class: %s\\%s', $this->namespace, $this->className)
+            );
+        }
     }
 
     public function getNamespace()

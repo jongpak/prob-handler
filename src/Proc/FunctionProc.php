@@ -5,6 +5,7 @@ namespace Prob\Handler\Proc;
 use Prob\Handler\ProcInterface;
 use Prob\Handler\ParameterMapper;
 use Prob\Handler\ParameterMap;
+use Prob\Handler\Exception\NoFunctionException;
 use \ReflectionFunction;
 
 class FunctionProc implements ProcInterface
@@ -17,6 +18,19 @@ class FunctionProc implements ProcInterface
     {
         $this->functionName = $functionName;
         $this->namespace = $namespace;
+
+        $this->validate();
+    }
+
+    private function validate()
+    {
+        if (function_exists($this->namespace . '\\' . $this->functionName)) {
+            return;
+        }
+
+        throw new NoFunctionException(
+            sprintf('No Function: %s\\%s', $this->namespace, $this->functionName)
+        );
     }
 
     public function getNamespace()

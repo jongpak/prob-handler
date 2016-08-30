@@ -5,6 +5,8 @@ namespace Prob\Handler;
 use PHPUnit\Framework\TestCase;
 use Prob\Handler\Proc\MethodProc;
 use Prob\Handler\ParameterMap;
+use Prob\Handler\Exception\NoClassException;
+use Prob\Handler\Exception\NoMethodException;
 
 class MethodProcTest extends TestCase
 {
@@ -12,6 +14,19 @@ class MethodProcTest extends TestCase
     {
         require_once 'mock/method.php';
     }
+
+    public function testNoClassException()
+    {
+        $this->expectException(NoClassException::class);
+        $proc = new MethodProc('???.???');
+    }
+
+    public function testNoMethodException()
+    {
+        $this->expectException(NoMethodException::class);
+        $proc = new MethodProc('Test.???', 'Prob\\Handler\\Test\\Method');
+    }
+
     public function testNamespace()
     {
         $proc = new MethodProc('Test.methodNoArgument', 'Prob\\Handler\\Test\\Method');

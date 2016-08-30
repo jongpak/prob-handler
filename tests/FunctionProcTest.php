@@ -5,12 +5,19 @@ namespace Prob\Handler;
 use PHPUnit\Framework\TestCase;
 use Prob\Handler\Proc\FunctionProc;
 use Prob\Handler\ParameterMap;
+use Prob\Handler\Exception\NoFunctionException;
 
 class FunctionProcTest extends TestCase
 {
     public function setUp()
     {
         require_once 'mock/function.php';
+    }
+
+    public function testNoFunctionException()
+    {
+        $this->expectException(NoFunctionException::class);
+        $proc = new FunctionProc('???');
     }
 
     public function testNamespace()
