@@ -10,16 +10,16 @@ class ParameterMapper
      */
     private $map;
 
-    private $parameters = [];
+    private $procParameters = [];
 
     public function setParameterMap(ParameterMap $map)
     {
         $this->map = $map;
     }
 
-    public function setProcParameters(array $parameters)
+    public function setProcParameters(array $procParameters)
     {
-        $this->parameters = $parameters;
+        $this->procParameters = $procParameters;
     }
 
 
@@ -28,16 +28,16 @@ class ParameterMapper
      */
     public function getMappedParameters()
     {
-        $mappedParameters = [];
+        $parameters = [];
 
         /**
          * @var ReflectionParameter $param
          */
-        foreach ($this->parameters as $param) {
-            $mappedParameters[] = $this->getMatchedParameter($param->getType(), $param->getName());
+        foreach ($this->procParameters as $param) {
+            $parameters[] = $this->getMatchedParameter($param->getType(), $param->getName());
         }
 
-        return $mappedParameters;
+        return $parameters;
     }
 
     private function getMatchedParameter($type, $name)
