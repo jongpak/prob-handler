@@ -42,7 +42,7 @@ class FunctionProc implements ProcInterface
         $mapper->setProcParameters($reflection->getParameters());
         $mapper->setParameterMap($map);
 
-        $parameters = $mapper->getMappedParametersWithoutReflection();
+        $parameters = $mapper->getMappedParameters();
 
         return $this->exec(...$parameters);
     }
