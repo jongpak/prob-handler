@@ -17,6 +17,9 @@ class ParameterMapper
         $this->map = $map;
     }
 
+    /**
+     * @param array $procParameters return of ReflectionFunctionAbstract::getParameters(), array of ReflectionParameter
+     */
     public function setProcParameters(array $procParameters)
     {
         $this->procParameters = $procParameters;
