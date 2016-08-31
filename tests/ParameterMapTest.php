@@ -10,8 +10,8 @@ class ParameterMapTest extends TestCase
     public function testBindByValidName()
     {
         $map = new ParameterMap();
-        $map->bindByName('test', 'ok');
-        $this->assertEquals('ok', $map->getValueByName('test'));
+        $map->bindByName('name', 'ok');
+        $this->assertEquals('ok', $map->getValueByName('name'));
     }
 
     public function testbBindByInvalidName()
@@ -19,15 +19,15 @@ class ParameterMapTest extends TestCase
         $this->expectException(NoBindParameterException::class);
 
         $map = new ParameterMap();
-        $map->bindByName('test', 'ok');
+        $map->bindByName('name', 'ok');
         $map->getValueByName('noItem');
     }
 
     public function testBindByValidType()
     {
         $map = new ParameterMap();
-        $map->bindByType(ParameterBindClass::class, 'ok');
-        $this->assertEquals('ok', $map->getValueByType(ParameterBindClass::class));
+        $map->bindByType('TYPE', 'ok');
+        $this->assertEquals('ok', $map->getValueByType('TYPE'));
     }
 
     public function testBindByInvalidType()
@@ -35,15 +35,15 @@ class ParameterMapTest extends TestCase
         $this->expectException(NoBindParameterException::class);
 
         $map = new ParameterMap();
-        $map->bindByType(ParameterBindClass::class, 'ok');
+        $map->bindByType('TYPE', 'ok');
         $map->getValueByType('noItem');
     }
 
     public function testBindByValidNameWithType()
     {
         $map = new ParameterMap();
-        $map->bindByNameWithType(ParameterBindClass::class, 'test', 'ok');
-        $this->assertEquals('ok', $map->getValueByNameWithType(ParameterBindClass::class, 'test'));
+        $map->bindByNameWithType('TYPE', 'name', 'ok');
+        $this->assertEquals('ok', $map->getValueByNameWithType('TYPE', 'name'));
     }
 
     public function testBindByInvalidNameWithType()
@@ -51,11 +51,7 @@ class ParameterMapTest extends TestCase
         $this->expectException(NoBindParameterException::class);
 
         $map = new ParameterMap();
-        $map->bindByNameWithType(ParameterBindClass::class, 'test', 'ok');
-        $map->getValueByNameWithType(ParameterBindClass::class, 'noItem');
+        $map->bindByNameWithType('TYPE', 'name', 'ok');
+        $map->getValueByNameWithType('TYPE', 'noItem');
     }
-}
-
-class ParameterBindClass
-{
 }
