@@ -37,7 +37,7 @@ class ParameterMapper
          * @var ReflectionParameter $param
          */
         foreach ($this->procParameters as $param) {
-            $parameters[] = $this->getMatchedParameter($param->getType(), $param->getName());
+            $parameters[] = $this->getMatchedParameter((string) $param->getType(), $param->getName());
         }
 
         return $parameters;
