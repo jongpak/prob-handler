@@ -27,7 +27,7 @@ class ProcFactory
 
     private static function getProcedureType($procedure)
     {
-        if (is_callable($procedure)) {
+        if (is_string($procedure) === false && is_callable($procedure)) {
             return static::TYPE_CLOSURE;
         }
 
