@@ -67,3 +67,44 @@ class Orange
     }
 }
 ```
+
+
+### binding parameters
+```php
+<?php
+
+use Prob\Handler\ProcFactory;
+use Prob\Handler\ParameterMap;
+
+use Apple\Banana\ValueObject;
+
+$proc = ProcFactory::getProc('testFuncWithBinding', 'Apple\\Banana');
+
+$vo = new ValueObject();
+$vo->value = 'Welcome ';
+
+$parameterMap = new ParameterMap();
+$parameterMap->bindByName('arg3', 'World!');
+$parameterMap->bindByType('array', ['str' => 'Hello']);
+$parameterMap->bindByNameWithType(ValueObject::class, 'arg1', $vo);
+
+// Welcome HelloWorld!
+echo $proc->execWithParameterMap($parameterMap);
+```
+
+someFuncWithBinding.php
+```php
+<?php
+
+namespace Apple\Banana;
+
+function testFuncWithBinding(ValueObject $arg1, array $arg2, $arg3)
+{
+    return $arg1->value . $arg2['str'] . $arg3;
+}
+
+class ValueObject
+{
+    public $value;
+}
+```
