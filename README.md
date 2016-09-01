@@ -11,12 +11,12 @@
 ```php
 <?php
 
-use Prob\Handler;
+use Prob\Handler\ProcFactory;
 
-$procA = new Proc('pi');
-echo $proc->exec();         // 3.141592...
+$procA = ProcFactory::getProc('pi');
+echo $pro;                  // 3.141592...
 
-$procB = new Proc('abs');
+$procB = ProcFactory::getProc('abs');
 echo $proc->exec(-32);      // 32
 ```
 
@@ -24,9 +24,9 @@ echo $proc->exec(-32);      // 32
 ```php
 <?php
 
-use Prob\Handler;
+use Prob\Handler\ProcFactory;
 
-$proc = new Proc('testFunc', 'Apple\\Banana');
+$proc = ProcFactory::getProc('testFunc', 'Apple\\Banana');
 print_r($proc->exec('one', 'two', 'three'));        // Array ( 'three', 'two', 'one' )
 ```
 
@@ -47,9 +47,9 @@ function testFunc($a, $b, $c)
 ```php
 <?php
 
-use Prob\Handler;
+use Prob\Handler\ProcFactory;
 
-$proc = new Proc('Orange.testFunc', 'Apple\\Banana');
+$proc = ProcFactory::getProc('Orange.testFunc', 'Apple\\Banana');
 echo $proc->exec(10, 5);            // 15
 ```
 
