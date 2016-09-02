@@ -41,7 +41,7 @@ class ClosureProc implements ProcInterface
         $mapper->setProcParameters($reflection->getParameters());
         $mapper->setParameterMap($map);
 
-        $parameters = $mapper->getMappedParameters($map);
+        $parameters = $mapper->getMappedParameters();
 
         return $this->exec(...$parameters);
     }
