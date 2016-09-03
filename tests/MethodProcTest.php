@@ -7,6 +7,7 @@ use Prob\Handler\Proc\MethodProc;
 use Prob\Handler\ParameterMap;
 use Prob\Handler\Exception\NoClassException;
 use Prob\Handler\Exception\NoMethodException;
+use Prob\Handler\Parameter\Named;
 
 class MethodProcTest extends TestCase
 {
@@ -66,9 +67,9 @@ class MethodProcTest extends TestCase
         $proc = new MethodProc('Test.methodArguments', 'Prob\\Handler\\Test\\Method');
 
         $parameterMap = new ParameterMap();
-        $parameterMap->bindByName('num3', 0.5);
-        $parameterMap->bindByName('num2', 10);
-        $parameterMap->bindByName('num1', 5);
+        $parameterMap->bindBy(new Named('num3'), 0.5);
+        $parameterMap->bindBy(new Named('num2'), 10);
+        $parameterMap->bindBy(new Named('num1'), 5);
 
         $instance = new Test\Method\Test();
 

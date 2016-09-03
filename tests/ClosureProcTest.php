@@ -5,6 +5,7 @@ namespace Prob\Handler;
 use PHPUnit\Framework\TestCase;
 use Prob\Handler\Proc\ClosureProc;
 use Prob\Handler\ParameterMap;
+use Prob\Handler\Parameter\Named;
 
 class ClosureProcTest extends TestCase
 {
@@ -47,9 +48,9 @@ class ClosureProcTest extends TestCase
         $proc = new ClosureProc($func);
 
         $parameterMap = new ParameterMap();
-        $parameterMap->bindByName('num3', 0.5);
-        $parameterMap->bindByName('num2', 10);
-        $parameterMap->bindByName('num1', 5);
+        $parameterMap->bindBy(new Named('num3'), 0.5);
+        $parameterMap->bindBy(new Named('num2'), 10);
+        $parameterMap->bindBy(new Named('num1'), 5);
 
         $this->assertEquals($func(5, 10, 0.5), $proc->execWithParameterMap($parameterMap));
     }

@@ -4,14 +4,17 @@ namespace Prob\Handler;
 
 use PHPUnit\Framework\TestCase;
 use Prob\Handler\Exception\NoBindParameterException;
+use Prob\Handler\Parameter\Named;
+use Prob\Handler\Parameter\Typed;
+use Prob\Handler\Parameter\TypedAndNamed;
 
 class ParameterMapTest extends TestCase
 {
     public function testBindByValidName()
     {
         $map = new ParameterMap();
-        $map->bindByName('name', 'ok');
-        $this->assertEquals('ok', $map->getValueByName('name'));
+        $map->bindBy(new Named('name'), 'ok');
+        $this->assertEquals('ok', $map->getValueBy(new Named('name')));
     }
 
     public function testbBindByInvalidName()
@@ -19,15 +22,15 @@ class ParameterMapTest extends TestCase
         $this->expectException(NoBindParameterException::class);
 
         $map = new ParameterMap();
-        $map->bindByName('name', 'ok');
-        $map->getValueByName('noItem');
+        $map->bindBy(new Named('name'), 'ok');
+        $map->getValueBy(new Named('noItem'));
     }
 
     public function testBindByValidType()
     {
         $map = new ParameterMap();
-        $map->bindByType('TYPE', 'ok');
-        $this->assertEquals('ok', $map->getValueByType('TYPE'));
+        $map->bindBy(new Typed('TYPE'), 'ok');
+        $this->assertEquals('ok', $map->getValueBy(new Typed('TYPE')));
     }
 
     public function testBindByInvalidType()
@@ -35,15 +38,15 @@ class ParameterMapTest extends TestCase
         $this->expectException(NoBindParameterException::class);
 
         $map = new ParameterMap();
-        $map->bindByType('TYPE', 'ok');
-        $map->getValueByType('noItem');
+        $map->bindBy(new Typed('TYPE'), 'ok');
+        $map->getValueBy(new Typed('noItem'));
     }
 
     public function testBindByValidNameWithType()
     {
         $map = new ParameterMap();
-        $map->bindByNameWithType('TYPE', 'name', 'ok');
-        $this->assertEquals('ok', $map->getValueByNameWithType('TYPE', 'name'));
+        $map->bindBy(new TypedAndNamed('TYPE', 'name'), 'ok');
+        $this->assertEquals('ok', $map->getValueBy(new TypedAndNamed('TYPE', 'name')));
     }
 
     public function testBindByInvalidNameWithType()
@@ -51,7 +54,7 @@ class ParameterMapTest extends TestCase
         $this->expectException(NoBindParameterException::class);
 
         $map = new ParameterMap();
-        $map->bindByNameWithType('TYPE', 'name', 'ok');
-        $map->getValueByNameWithType('TYPE', 'noItem');
+        $map->bindBy(new TypedAndNamed('TYPE', 'name'), 'ok');
+        $map->getValueBy(new TypedAndNamed('TYPE', 'noItem'));
     }
 }

@@ -3,113 +3,43 @@
 namespace Prob\Handler;
 
 use Prob\Handler\Exception\NoBindParameterException;
+use Prob\Handler\ParameterInterface;
 
 class ParameterMap
 {
     /**
      * @var array
      */
-    private $names = [];
+    private $parameters = [];
 
     /**
-     * @var array
-     */
-    private $types = [];
-
-    /**
-     * @var array
-     */
-    private $nameWithTypes = [];
-
-    /**
-     * Bind a parameter by name
+     * Bind a parameter
      *
-     * @param string $name name of parameter
-     * @param mixed $value value
+     * @param ParameterInterface $parameter
+     * @param mixed $value
      */
-    public function bindByName($name, $value)
+    public function bindBy(ParameterInterface $parameter, $value)
     {
-        $this->names[$name] = $value;
+        $this->parameters[$parameter->getHash()] = $value;
     }
 
     /**
-     * Bind a parameter by type
+     * Get a parameter
      *
-     * @param string $type type of parameter
-     * @param mixed $value value
+     * @param ParameterInterface $parameter
+     * @return mixed
      */
-    public function bindByType($type, $value)
+    public function getValueBy(ParameterInterface $parameter)
     {
-        $this->types[$type] = $value;
-    }
-
-    /**
-     * Bind a parameter by name and type
-     *
-     * @param string $type type of parameter
-     * @param string $name name of parameter
-     * @param mixed $value value
-     */
-    public function bindByNameWithType($type, $name, $value)
-    {
-        $this->nameWithTypes[$type][$name] = $value;
-    }
-
-    /**
-     * Get a value with matching name
-     *
-     * @param string $name name of parameter
-     */
-    public function getValueByName($name)
-    {
-        if ($this->isExistBindingParameterByName($name) === false) {
-            throw new NoBindParameterException('No parameter name: ' . $name);
+        if ($this->isExistBy($parameter) === false) {
+            throw new NoBindParameterException('No parameter: ' . (string) $parameter);
         }
 
-        return $this->names[$name];
+        return $this->parameters[$parameter->getHash()];
     }
 
-    /**
-     * Get a value with matching type
-     *
-     * @param string $type type of parameter
-     */
-    public function getValueByType($type)
+    public function isExistBy(ParameterInterface $parameter)
     {
-        if ($this->isExistBindingParameterByType($type) === false) {
-            throw new NoBindParameterException('No parameter type: ' . $type);
-        }
-
-        return $this->types[$type];
-    }
-
-    /**
-     * Get a value with matching name and type
-     *
-     * @param string $type type of parameter
-     * @param string $name name of parameter
-     */
-    public function getValueByNameWithType($type, $name)
-    {
-        if ($this->isExistBindingParameterByNameWithType($type, $name) === false) {
-            throw new NoBindParameterException('No parameter type and name: ' . $type . ', ' . $name);
-        }
-
-        return $this->nameWithTypes[$type][$name];
-    }
-
-    public function isExistBindingParameterByName($name)
-    {
-        return isset($this->names[$name]);
-    }
-
-    public function isExistBindingParameterByType($type)
-    {
-        return isset($this->types[$type]);
-    }
-
-    public function isExistBindingParameterByNameWithType($type, $name)
-    {
-        return isset($this->nameWithTypes[$type]) && isset($this->nameWithTypes[$type][$name]);
+        return isset($this->parameters[$parameter->getHash()]);
     }
 }

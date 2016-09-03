@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Prob\Handler\Proc\FunctionProc;
 use Prob\Handler\ParameterMap;
 use Prob\Handler\Exception\NoFunctionException;
+use Prob\Handler\Parameter\Named;
 
 class FunctionProcTest extends TestCase
 {
@@ -55,9 +56,9 @@ class FunctionProcTest extends TestCase
         $proc = new FunctionProc('functionArguments', 'Prob\\Handler\\Test\\Functions');
 
         $parameterMap = new ParameterMap();
-        $parameterMap->bindByName('num3', 0.5);
-        $parameterMap->bindByName('num2', 10);
-        $parameterMap->bindByName('num1', 5);
+        $parameterMap->bindBy(new Named('num3'), 0.5);
+        $parameterMap->bindBy(new Named('num2'), 10);
+        $parameterMap->bindBy(new Named('num1'), 5);
 
         $this->assertEquals(
                             Test\Functions\functionArguments(5, 10, 0.5),

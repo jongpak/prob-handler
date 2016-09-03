@@ -3,9 +3,12 @@
 namespace Prob\Handler;
 
 use PHPUnit\Framework\TestCase;
+use Prob\Handler\Test\Method\Test;
+use Prob\Handler\Parameter\Named;
+use Prob\Handler\Parameter\Typed;
+use Prob\Handler\Parameter\TypedAndNamed;
 use \ReflectionFunction;
 use stdClass;
-use Prob\Handler\Test\Method\Test;
 
 class ParameterMapperTest extends TestCase
 {
@@ -15,10 +18,10 @@ class ParameterMapperTest extends TestCase
         $reflection = new ReflectionFunction('Prob\\Handler\\Test\\Functions\\functionArgumentsName');
 
         $map = new ParameterMap();
-        $map->bindByName('arg4', null);
-        $map->bindByName('arg3', false);
-        $map->bindByName('arg2', 'ok');
-        $map->bindByName('arg1', 1);
+        $map->bindBy(new Named('arg4'), null);
+        $map->bindBy(new Named('arg3'), false);
+        $map->bindBy(new Named('arg2'), 'ok');
+        $map->bindBy(new Named('arg1'), 1);
 
         $mapper = new ParameterMapper();
         $mapper->setProcParameters($reflection->getParameters());
@@ -55,8 +58,8 @@ class ParameterMapperTest extends TestCase
         $reflection = new ReflectionFunction('Prob\\Handler\\Test\\Functions\\functionArgumentsType');
 
         $map = new ParameterMap();
-        $map->bindByType(stdClass::class, new stdClass());
-        $map->bindByType(Test::class, new Test());
+        $map->bindBy(new Typed(stdClass::class), new stdClass());
+        $map->bindBy(new Typed(Test::class), new Test());
 
         $mapper = new ParameterMapper();
         $mapper->setProcParameters($reflection->getParameters());
@@ -73,8 +76,8 @@ class ParameterMapperTest extends TestCase
         $reflection = new ReflectionFunction('Prob\\Handler\\Test\\Functions\\functionArgumentsType');
 
         $map = new ParameterMap();
-        $map->bindByType(stdClass::class, new stdClass());
-        $map->bindByType('NotExistType', new Test());
+        $map->bindBy(new Typed(stdClass::class), new stdClass());
+        $map->bindBy(new Typed('NotExistType'), new Test());
 
         $mapper = new ParameterMapper();
         $mapper->setProcParameters($reflection->getParameters());
@@ -92,8 +95,8 @@ class ParameterMapperTest extends TestCase
         $reflection = new ReflectionFunction('Prob\\Handler\\Test\\Functions\\functionArgumentsType');
 
         $map = new ParameterMap();
-        $map->bindByNameWithType(stdClass::class, 'arg2', new stdClass());
-        $map->bindByNameWithType(Test::class, 'arg1', new Test());
+        $map->bindBy(new TypedAndNamed(stdClass::class, 'arg2'), new stdClass());
+        $map->bindBy(new TypedAndNamed(Test::class, 'arg1'), new Test());
 
         $mapper = new ParameterMapper();
         $mapper->setProcParameters($reflection->getParameters());
@@ -110,9 +113,9 @@ class ParameterMapperTest extends TestCase
         $reflection = new ReflectionFunction('Prob\\Handler\\Test\\Functions\\functionArgumentsType');
 
         $map = new ParameterMap();
-        $map->bindByNameWithType(Test::class, 'notExistName', new Test());
-        $map->bindByNameWithType(stdClass::class, 'arg2', new stdClass());
-        $map->bindByNameWithType(Test::class, 'arg1', new Test());
+        $map->bindBy(new TypedAndNamed(Test::class, 'notExistName'), new Test());
+        $map->bindBy(new TypedAndNamed(stdClass::class, 'arg2'), new stdClass());
+        $map->bindBy(new TypedAndNamed(Test::class, 'arg1'), new Test());
 
         $mapper = new ParameterMapper();
         $mapper->setProcParameters($reflection->getParameters());
@@ -130,8 +133,8 @@ class ParameterMapperTest extends TestCase
 
         $map = new ParameterMap();
 
-        $map->bindByName('arg2', 'ok');
-        $map->bindByNameWithType(stdClass::class, 'arg2', new stdClass());
+        $map->bindBy(new Named('arg2'), 'ok');
+        $map->bindBy(new TypedAndNamed(stdClass::class, 'arg2'), new stdClass());
 
         $mapper = new ParameterMapper();
         $mapper->setProcParameters($reflection->getParameters());

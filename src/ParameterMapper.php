@@ -2,6 +2,10 @@
 
 namespace Prob\Handler;
 
+use Prob\Handler\Parameter\Named;
+use Prob\Handler\Parameter\Typed;
+use Prob\Handler\Parameter\TypedAndNamed;
+
 class ParameterMapper
 {
 
@@ -45,19 +49,16 @@ class ParameterMapper
 
     private function getMatchedParameter($type, $name)
     {
-        // bind Name with Type
-        if ($this->map->isExistBindingParameterByNameWithType($type, $name) === true) {
-            return $this->map->getValueByNameWithType($type, $name);
-        }
+        $matchingParameters = [
+            new TypedAndNamed($type, $name),
+            new Named($name),
+            new Typed($type)
+        ];
 
-        // bind Name
-        if ($this->map->isExistBindingParameterByName($name) === true) {
-            return $this->map->getValueByName($name);
-        }
-
-        // bind Type
-        if ($this->map->isExistBindingParameterByType($type) === true) {
-            return $this->map->getValueByType($type);
+        foreach ($matchingParameters as $parameter) {
+            if ($this->map->isExistBy($parameter)) {
+                return $this->map->getValueBy($parameter);
+            }
         }
     }
 }
