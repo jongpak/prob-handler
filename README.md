@@ -75,6 +75,9 @@ class Orange
 
 use Prob\Handler\ProcFactory;
 use Prob\Handler\ParameterMap;
+use Prob\Handler\Parameter\Named;
+use Prob\Handler\Parameter\Typed;
+use Prob\Handler\Parameter\TypedAndNamed;
 
 use Apple\Banana\ValueObject;
 
@@ -84,9 +87,9 @@ $vo = new ValueObject();
 $vo->value = 'Welcome ';
 
 $parameterMap = new ParameterMap();
-$parameterMap->bindByName('arg3', 'World!');
-$parameterMap->bindByType('array', ['str' => 'Hello']);
-$parameterMap->bindByNameWithType(ValueObject::class, 'arg1', $vo);
+$parameterMap->bindBy(new Named('arg3'), 'World!');
+$parameterMap->bindBy(new Typed('array'), ['str' => 'Hello']);
+$parameterMap->bindBy(new TypedAndNamed(ValueObject::class, 'arg1'), $vo);
 
 // Welcome HelloWorld!
 echo $proc->execWithParameterMap($parameterMap);
