@@ -38,7 +38,7 @@ class MethodProc implements ProcInterface
 
         if (method_exists($this->namespace . '\\' . $this->className, $this->methodName) === false) {
             throw new NoMethodException(
-                sprintf('No Class: %s\\%s', $this->namespace, $this->className)
+                sprintf('No Method: %s\\%s.%s', $this->namespace, $this->className, $this->methodName)
             );
         }
     }
