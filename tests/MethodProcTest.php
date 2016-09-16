@@ -78,4 +78,27 @@ class MethodProcTest extends TestCase
                             $proc->execWithParameterMap($parameterMap)
         );
     }
+
+    public function testExecConstructor1()
+    {
+        $proc = new MethodProc('Test.getVar', 'Prob\\Handler\\Test\\Method');
+        $this->assertEquals(null, $proc->exec());
+    }
+
+    public function testExecConstructor2()
+    {
+        $proc = new MethodProc('Test.getVar', 'Prob\\Handler\\Test\\Method');
+        $proc->execConstructor('test');
+        $this->assertEquals('test', $proc->exec());
+    }
+
+    public function testExecConstructorWithParameterMap()
+    {
+        $map = new ParameterMap();
+        $map->bindBy(new Named('var'), 'test');
+
+        $proc = new MethodProc('Test.getVar', 'Prob\\Handler\\Test\\Method');
+        $proc->execConstructorWithParameterMap($map);
+        $this->assertEquals('test', $proc->exec());
+    }
 }

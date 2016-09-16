@@ -8,14 +8,16 @@ use Prob\Handler\ParameterMap;
 use Prob\Handler\Exception\NoClassException;
 use Prob\Handler\Exception\NoMethodException;
 use \ReflectionMethod;
+use \ReflectionClass;
 
 class MethodProc implements ProcInterface
 {
-
     private $className = '';
     private $methodName = '';
 
     private $namespace = '';
+
+    private $instance = null;
 
     public function __construct($methodNameWithClassName, $namespace = '')
     {
@@ -52,12 +54,38 @@ class MethodProc implements ProcInterface
         return sprintf('%s.%s', $this->className, $this->methodName);
     }
 
-    public function exec(...$args)
+    public function execConstructor(...$args)
+    {
+        $classFullName = $this->namespace . '\\' . $this->className;
+        $this->instance = new $classFullName(...$args);
+
+        return $this->instance;
+    }
+
+    public function execConstructorWithParameterMap(ParameterMap $map)
     {
         $classFullName = $this->namespace . '\\' . $this->className;
 
-        $instance = new $classFullName();
-        return $instance->{$this->methodName}(...$args);
+        $reflectionClass = new ReflectionClass($classFullName);
+        /** @var ReflectionMethod */
+        $reflectionConstructor = $reflectionClass->getConstructor();
+
+        $mapper = new ParameterMapper();
+        $mapper->setProcParameters($reflectionConstructor->getParameters());
+        $mapper->setParameterMap($map);
+
+        $parameters = $mapper->getMappedParameters();
+
+        $this->instance = $this->execConstructor(...$parameters);
+        return $this->instance;
+    }
+
+    public function exec(...$args)
+    {
+        if ($this->instance === null) {
+            $this->execConstructor();
+        }
+        return $this->instance->{$this->methodName}(...$args);
     }
 
     public function execWithParameterMap(ParameterMap $map)
