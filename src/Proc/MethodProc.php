@@ -54,9 +54,9 @@ class MethodProc implements ProcInterface
 
     public function exec(...$args)
     {
-        $functionFullName = $this->namespace . '\\' . $this->className;
+        $classFullName = $this->namespace . '\\' . $this->className;
 
-        $instance = new $functionFullName();
+        $instance = new $classFullName();
         return $instance->{$this->methodName}(...$args);
     }
 
