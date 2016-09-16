@@ -14,6 +14,7 @@ class MethodProcTest extends TestCase
     public function setUp()
     {
         require_once 'mock/method.php';
+        require_once 'mock/noConstructorClass.php';
     }
 
     public function testNoClassException()
@@ -98,6 +99,16 @@ class MethodProcTest extends TestCase
         $map->bindBy(new Named('var'), 'test');
 
         $proc = new MethodProc('Test.getVar', 'Prob\\Handler\\Test\\Method');
+        $proc->execConstructorWithParameterMap($map);
+        $this->assertEquals('test', $proc->exec());
+    }
+
+    public function testNoConstructor()
+    {
+        $map = new ParameterMap();
+        $map->bindBy(new Named('var'), 'test');
+
+        $proc = new MethodProc('noConstructorClass.testMethod', 'Prob\\Handler\\Test\\Method');
         $proc->execConstructorWithParameterMap($map);
         $this->assertEquals('test', $proc->exec());
     }

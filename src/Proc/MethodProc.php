@@ -70,6 +70,10 @@ class MethodProc implements ProcInterface
         /** @var ReflectionMethod */
         $reflectionConstructor = $reflectionClass->getConstructor();
 
+        if ($reflectionConstructor === null) {
+            return;
+        }
+
         $mapper = new ParameterMapper();
         $mapper->setProcParameters($reflectionConstructor->getParameters());
         $mapper->setParameterMap($map);
