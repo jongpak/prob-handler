@@ -7,7 +7,7 @@ use Prob\Handler\Parameter\Named;
 use Prob\Handler\Parameter\Typed;
 use Prob\Handler\Parameter\TypedAndNamed;
 
-class ParameterINterfaceTest extends TestCase
+class ParameterInterfaceTest extends TestCase
 {
 
     public function testIsEqual1()
