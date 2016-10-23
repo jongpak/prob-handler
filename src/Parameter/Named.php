@@ -6,7 +6,6 @@ use Prob\Handler\ParameterInterface;
 
 class Named implements ParameterInterface
 {
-
     private $name;
 
     public function __construct($name)

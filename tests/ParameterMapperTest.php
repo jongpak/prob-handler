@@ -12,7 +12,6 @@ use stdClass;
 
 class ParameterMapperTest extends TestCase
 {
-
     public function testNameMappingExistParameter()
     {
         $reflection = new ReflectionFunction('Prob\\Handler\\Test\\Functions\\functionArgumentsName');

@@ -8,7 +8,6 @@ use Prob\Handler\Parameter\TypedAndNamed;
 
 class ParameterMapper
 {
-
     /**
      * @var ParameterMap
      */

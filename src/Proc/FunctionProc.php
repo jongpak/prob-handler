@@ -10,7 +10,6 @@ use \ReflectionFunction;
 
 class FunctionProc implements ProcInterface
 {
-
     private $functionName = '';
     private $namespace = '';
 

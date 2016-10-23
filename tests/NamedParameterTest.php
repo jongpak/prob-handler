@@ -7,7 +7,6 @@ use Prob\Handler\Parameter\Named;
 
 class NamedParameterTest extends TestCase
 {
-
     public function testNameTest1()
     {
         $parameter = new Named('test');

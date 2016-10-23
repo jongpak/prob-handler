@@ -7,8 +7,6 @@ use Prob\Handler\Parameter\TypedAndNamed;
 
 class TypedAndNamedParameterTest extends TestCase
 {
-
-
     public function testNameTest1()
     {
         $parameter = new TypedAndNamed('Test', 'test');

@@ -9,7 +9,6 @@ use Prob\Handler\Parameter\TypedAndNamed;
 
 class ParameterInterfaceTest extends TestCase
 {
-
     public function testIsEqual1()
     {
         $parameter = new Named('test');

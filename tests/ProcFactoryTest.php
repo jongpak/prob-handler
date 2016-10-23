@@ -9,7 +9,6 @@ use Prob\Handler\Proc\FunctionProc;
 
 class ProcFactoryTest extends TestCase
 {
-
     public function testClosureFactory1()
     {
         $proc = ProcFactory::getProc(function () {});

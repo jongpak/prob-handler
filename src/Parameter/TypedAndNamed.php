@@ -6,7 +6,6 @@ use Prob\Handler\ParameterInterface;
 
 class TypedAndNamed implements ParameterInterface
 {
-
     private $type;
     private $name;
 

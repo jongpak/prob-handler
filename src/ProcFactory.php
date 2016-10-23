@@ -8,7 +8,6 @@ use Prob\Handler\Proc\MethodProc;
 
 class ProcFactory
 {
-
     const TYPE_CLOSURE = 'closure';
     const TYPE_FUNCTION = 'function';
     const TYPE_METHOD = 'method';

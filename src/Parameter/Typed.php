@@ -6,7 +6,6 @@ use Prob\Handler\ParameterInterface;
 
 class Typed implements ParameterInterface
 {
-
     private $type;
 
     public function __construct($type)

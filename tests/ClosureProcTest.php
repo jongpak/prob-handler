@@ -9,7 +9,6 @@ use Prob\Handler\Parameter\Named;
 
 class ClosureProcTest extends TestCase
 {
-
     public function testNamespace()
     {
         $proc = new ClosureProc(function () { });
